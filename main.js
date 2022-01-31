@@ -14,7 +14,7 @@ class Block {
     }
 
     mineBlock(difficulty) {
-        while(this.hash.substring(0, difficulty) !== Array(difficulty+1).join(""))  {
+        while(this.hash.substring(0, difficulty) !== Array(difficulty+1).join("0"))  {
             this.nonce++;
             this.hash = this.calculateHash();
         }
@@ -25,6 +25,7 @@ class Block {
 class Blockchain {
     constructor() {
         this.chain = [this.createGenesisBlock()];
+        this.difficulty = 2;
     }
     createGenesisBlock() {
         return new Block(0, '30/01/2021', "Genensis Block", "0");
@@ -36,7 +37,7 @@ class Blockchain {
 
     addBlock(newBlock) {
         newBlock.previousHash = this.getLetestBlock().hash;
-        newBlock.hash = newBlock.calculateHash();
+        newBlock.mineBlock(this.difficulty);
         this.chain.push(newBlock);
     }
     isChainValid() {
@@ -55,13 +56,15 @@ class Blockchain {
 }
 
 let myCoin = new Blockchain();
+console.log("mining first Block...");
 myCoin.addBlock(new Block(1, Date.now(), {amount:50}));
+console.log("mining Second Block...");
 myCoin.addBlock(new Block(2, Date.now(), {amount:100}));
 console.log("isChainValid", myCoin.isChainValid())
 // myCoin.chain[1].data = {amount:200};
-myCoin.chain[1].hash = myCoin.chain[1].calculateHash();
+// myCoin.chain[1].hash = myCoin.chain[1].calculateHash();
 if(myCoin.isChainValid()) {
     console.log(JSON.stringify(myCoin, null, 4));
 }
 
-console.log("isChainValid", myCoin.isChainValid())
+// console.log("isChainValid", myCoin.isChainValid())
